@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GraduationCap, AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { STUDENT_DATABASE } from '../constants';
 import { storage } from '../lib/storage';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export const StudentLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -20,26 +21,29 @@ export const StudentLogin: React.FC = () => {
     setError('');
     setIsLoading(true);
     
-    await new Promise(r => setTimeout(r, 800));
-    
-    const student = STUDENT_DATABASE[zprn.toLowerCase()];
-    
-    if (!student) {
-      setError('ZPRN not found in the system. Please check your credentials.');
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/student-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zprn, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      storage.loginStudent({ zprn: data.zprn, name: data.name, email: data.email });
+      
+      const from = (location.state as any)?.from || '/submit';
+      navigate(from);
+    } catch (err) {
+      setError('Unable to connect to the server. Please try again later.');
       setIsLoading(false);
-      return;
     }
-    
-    if (student.password !== password) {
-      setError('Incorrect password. Please try again.');
-      setIsLoading(false);
-      return;
-    }
-    
-    storage.loginStudent({ zprn: student.zprn, name: student.name, email: student.email });
-    
-    const from = (location.state as any)?.from || '/submit';
-    navigate(from);
   };
 
   return (

@@ -4,6 +4,8 @@ const nodemailer = require("nodemailer");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Complaint = require("./models/Complaint");
+const Student = require("./models/Student");
+const Staff = require("./models/Staff");
 
 const app = express();
 app.use(cors());
@@ -30,6 +32,48 @@ const transporter = nodemailer.createTransport({
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ status: "ZCOER Backend Running", port: 5001, dbStatus: mongoose.connection.readyState });
+});
+
+// --- Authentication Endpoints ---
+
+// Student Login
+app.post("/api/auth/student-login", async (req, res) => {
+  try {
+    const { zprn, password } = req.body;
+    const student = await Student.findOne({ zprn: zprn.toLowerCase() });
+
+    if (!student) {
+      return res.status(401).json({ error: "ZPRN not found in the student registry." });
+    }
+    if (student.password !== password) {
+      return res.status(401).json({ error: "Incorrect password. Please try again." });
+    }
+
+    res.json({ zprn: student.zprn, name: student.name, email: student.email });
+  } catch (error) {
+    console.error("[API Error] Student login failed:", error);
+    res.status(500).json({ error: "Login failed. Please try again." });
+  }
+});
+
+// Staff Login
+app.post("/api/auth/staff-login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const staff = await Staff.findOne({ username: username.toLowerCase() });
+
+    if (!staff) {
+      return res.status(401).json({ error: "Username not found in the staff registry." });
+    }
+    if (staff.password !== password) {
+      return res.status(401).json({ error: "Incorrect password. Please try again." });
+    }
+
+    res.json({ id: staff.staffId, username: staff.username, name: staff.name, assignedCategory: staff.assignedCategory, role: staff.role });
+  } catch (error) {
+    console.error("[API Error] Staff login failed:", error);
+    res.status(500).json({ error: "Login failed. Please try again." });
+  }
 });
 
 // --- Database API Endpoints ---

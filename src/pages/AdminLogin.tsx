@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertCircle, Eye, EyeOff, Lock } from 'lucide-react';
-import { STAFF_ACCOUNTS } from '../constants';
 import { storage } from '../lib/storage';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -17,24 +18,27 @@ export const AdminLogin: React.FC = () => {
     setError('');
     setIsLoading(true);
     
-    await new Promise(r => setTimeout(r, 800));
-    
-    const staff = STAFF_ACCOUNTS[username.toLowerCase()];
-    
-    if (!staff) {
-      setError('Username not found in the staff registry.');
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/staff-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      storage.loginAdmin({ id: data.id, username: data.username, name: data.name, assignedCategory: data.assignedCategory, role: data.role });
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setError('Unable to connect to the server. Please try again later.');
       setIsLoading(false);
-      return;
     }
-    
-    if (staff.password !== password) {
-      setError('Incorrect password. Please try again.');
-      setIsLoading(false);
-      return;
-    }
-    
-    storage.loginAdmin({ id: staff.id, username: staff.username, name: staff.name, assignedCategory: staff.assignedCategory, role: staff.role });
-    navigate('/admin/dashboard');
   };
 
   return (
