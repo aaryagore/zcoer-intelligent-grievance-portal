@@ -172,6 +172,21 @@ app.post("/api/send-mail", async (req, res) => {
   }
 });
 
+// Test email endpoint
+app.get("/api/test-email", async (req, res) => {
+  try {
+    await transporter.verify();
+    res.json({ success: true, message: "Gmail connection is working perfectly!" });
+  } catch (error) {
+    console.error("[Mail Test Error]", error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      tip: "If you see 'Invalid login', make sure GMAIL_USER and GMAIL_PASS are set correctly in Render environment variables."
+    });
+  }
+});
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`\n╔══════════════════════════════════════════════════╗`);
