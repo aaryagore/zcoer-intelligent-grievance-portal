@@ -19,7 +19,7 @@ export const AdminLogin: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/staff-login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/staff-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

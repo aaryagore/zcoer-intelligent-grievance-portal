@@ -22,7 +22,7 @@ export const StudentLogin: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/student-login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/student-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ zprn, password })

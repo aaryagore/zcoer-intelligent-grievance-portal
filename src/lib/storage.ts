@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 export const storage = {
   getComplaints: async (): Promise<Complaint[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/complaints`);
+      const response = await fetch(`${API_BASE_URL}/api/complaints`);
       if (!response.ok) throw new Error('Failed to fetch complaints');
       return await response.json();
     } catch (error) {
@@ -17,7 +17,7 @@ export const storage = {
 
   saveComplaint: async (complaint: Complaint): Promise<Complaint | null> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/complaints`, {
+      const response = await fetch(`${API_BASE_URL}/api/complaints`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(complaint)
@@ -32,7 +32,7 @@ export const storage = {
 
   updateComplaintStatus: async (id: string, status: Complaint['status']): Promise<Complaint | null> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/complaints/${id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/complaints/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
