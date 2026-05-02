@@ -10,11 +10,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Database Connection
-const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI)
-  .then(() => console.log(`[DB] Connected to MongoDB`))
-  .catch(err => console.error(`[DB] Connection error:`, err));
+// Database Connection Singleton
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedDb && mongoose.connection.readyState === 1) {
+    return cachedDb;
+  }
+  console.log('[DB] Connecting to MongoDB...');
+  cachedDb = await mongoose.connect(process.env.MONGO_URI);
+  return cachedDb;
+}
+
+// Middleware to ensure DB is connected
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (error) {
+    console.error('[DB Error]', error);
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
