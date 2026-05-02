@@ -6,9 +6,10 @@ const complaintSchema = new mongoose.Schema({
   subject: { type: String, required: true },
   description: { type: String, required: true },
   isAnonymous: { type: Boolean, default: false },
-  studentName: String,
-  studentId: String,
-  studentEmail: String,
+  policyViolation: { type: Boolean, default: false },
+  studentName: { type: String, default: 'Anonymous' },
+  studentId: { type: String, default: 'Anonymous' },
+  studentEmail: { type: String, default: 'Anonymous' },
   status: { 
     type: String, 
     enum: ["Pending", "In Progress", "Resolved", "Closed"], 
@@ -19,13 +20,7 @@ const complaintSchema = new mongoose.Schema({
     enum: ["Low", "Medium", "High", "Critical"], 
     default: "Medium" 
   },
-  aiAnalysis: {
-    sentiment: String,
-    category: String,
-    urgency: String,
-    summary: String,
-    suggestedAction: String
-  },
+  mlScore: { type: mongoose.Schema.Types.Mixed },
   createdAt: { type: Number, default: Date.now },
   resolvedAt: Number,
   emailSent: { type: Boolean, default: false },
