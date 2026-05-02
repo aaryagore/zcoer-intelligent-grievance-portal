@@ -25,17 +25,17 @@ const transporter = nodemailer.createTransport({
 });
 
 // Root message
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.send("ZCOER Intelligent Grievance API is Live on Vercel!");
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ status: "Vercel API Running", dbStatus: mongoose.connection.readyState });
 });
 
 // Debug endpoint
-app.get('/debug', (req, res) => {
+app.get('/api/debug', (req, res) => {
   res.json({ 
     hasMongoUri: !!process.env.MONGO_URI,
     mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 15) + "..." : "MISSING",
@@ -46,7 +46,7 @@ app.get('/debug', (req, res) => {
 });
 
 // --- Auth Endpoints ---
-app.post("/auth/student-login", async (req, res) => {
+app.post("/api/auth/student-login", async (req, res) => {
   try {
     const { zprn, password } = req.body;
     const student = await Student.findOne({ zprn: zprn.toLowerCase() });
@@ -59,7 +59,7 @@ app.post("/auth/student-login", async (req, res) => {
   }
 });
 
-app.post("/auth/staff-login", async (req, res) => {
+app.post("/api/auth/staff-login", async (req, res) => {
   try {
     const { username, password } = req.body;
     const staff = await Staff.findOne({ username: username.toLowerCase() });
@@ -73,7 +73,7 @@ app.post("/auth/staff-login", async (req, res) => {
 });
 
 // --- Complaint Endpoints ---
-app.get("/complaints", async (req, res) => {
+app.get("/api/complaints", async (req, res) => {
   try {
     const complaints = await Complaint.find().sort({ createdAt: -1 });
     res.json(complaints);
@@ -82,7 +82,7 @@ app.get("/complaints", async (req, res) => {
   }
 });
 
-app.post("/complaints", async (req, res) => {
+app.post("/api/complaints", async (req, res) => {
   try {
     const newComplaint = new Complaint(req.body);
     await newComplaint.save();
@@ -92,7 +92,7 @@ app.post("/complaints", async (req, res) => {
   }
 });
 
-app.put("/complaints/:id/status", async (req, res) => {
+app.put("/api/complaints/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -106,7 +106,7 @@ app.put("/complaints/:id/status", async (req, res) => {
 });
 
 // --- Mail Endpoint ---
-app.post("/send-mail", async (req, res) => {
+app.post("/api/send-mail", async (req, res) => {
   const { to, subject, message } = req.body;
   try {
     await transporter.sendMail({
