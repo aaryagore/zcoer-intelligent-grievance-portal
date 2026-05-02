@@ -2,20 +2,21 @@ import mongoose from 'mongoose';
 
 const complaintSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
-  studentZprn: { type: String, required: true },
-  studentName: { type: String, required: true },
-  studentEmail: { type: String, required: true },
   category: { type: String, required: true },
   subject: { type: String, required: true },
   description: { type: String, required: true },
+  isAnonymous: { type: Boolean, default: false },
+  studentName: String,
+  studentId: String,
+  studentEmail: String,
   status: { 
     type: String, 
-    enum: ["Pending", "In Progress", "Resolved"], 
+    enum: ["Pending", "In Progress", "Resolved", "Closed"], 
     default: "Pending" 
   },
   priority: { 
     type: String, 
-    enum: ["Low", "Medium", "High"], 
+    enum: ["Low", "Medium", "High", "Critical"], 
     default: "Medium" 
   },
   aiAnalysis: {
@@ -25,8 +26,10 @@ const complaintSchema = new mongoose.Schema({
     summary: String,
     suggestedAction: String
   },
-  createdAt: { type: Date, default: Date.now },
-  resolvedAt: Date
+  createdAt: { type: Number, default: Date.now },
+  resolvedAt: Number,
+  emailSent: { type: Boolean, default: false },
+  resolutionEmailSent: { type: Boolean, default: false }
 });
 
 export default mongoose.models.Complaint || mongoose.model("Complaint", complaintSchema);
