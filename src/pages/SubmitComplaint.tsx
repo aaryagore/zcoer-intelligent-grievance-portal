@@ -100,26 +100,68 @@ export const SubmitComplaint: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="max-w-lg mx-auto py-24 px-4 text-center">
-        <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner ${detectedAbuse ? 'bg-rose-50' : 'bg-emerald-50'}`}>
-          {detectedAbuse ? <Skull className="w-12 h-12 text-rose-600" /> : <CheckCircle2 className="w-12 h-12 text-emerald-600" />}
+      <div className="max-w-2xl mx-auto py-24 px-4 text-center">
+        <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl animate-bounce ${detectedAbuse ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}`}>
+          {detectedAbuse ? <Skull className="w-12 h-12" /> : <CheckCircle2 className="w-12 h-12" />}
         </div>
-        <h2 className="text-4xl font-black text-indigo-900 mb-4 tracking-tight">
-          {detectedAbuse ? 'Record Flagged' : 'Case Registered'}
+        
+        <h2 className="text-5xl font-black text-indigo-950 mb-4 tracking-tighter">
+          {detectedAbuse ? 'POLICY VIOLATION' : 'CASE REGISTERED'}
         </h2>
-        <p className="text-slate-600 mb-6 text-lg leading-relaxed">
+        <p className="text-slate-500 mb-12 text-xl font-medium">
           {detectedAbuse 
-            ? 'Your grievance was submitted, but flagged for abusive content. Your identity has been recorded for review.' 
-            : 'Your grievance has been logged and ML-prioritized. A confirmation email has been dispatched to your inbox.'}
+            ? 'Your complaint has been flagged and your identity disclosed due to policy violations.' 
+            : 'Your grievance has been intelligently processed and routed.'}
         </p>
-        {!detectedAbuse && (
-          <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-8 text-sm text-indigo-700 font-medium">
-            📧 Check your email at <strong>{currentStudent.email}</strong> for your complaint receipt.
+
+        {/* Digital Receipt Card */}
+        <div className="bg-white rounded-[2.5rem] border-2 border-slate-100 shadow-2xl shadow-indigo-100/50 overflow-hidden text-left animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="bg-indigo-950 p-6 flex justify-between items-center">
+            <span className="text-zeal-gold font-black tracking-widest text-xs uppercase">Official Receipt</span>
+            <span className="text-white/50 text-xs font-mono">ZCOER-IRS-2026</span>
           </div>
-        )}
-        <div className="flex items-center justify-center space-x-2 text-indigo-600 font-bold">
-          <div className="w-4 h-4 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin"></div>
-          <span>Redirecting...</span>
+          <div className="p-10 space-y-8">
+            <div className="flex justify-between items-start border-b border-slate-100 pb-6">
+              <div>
+                <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Complaint Reference</p>
+                <h3 className="text-3xl font-black text-indigo-900 font-mono tracking-tighter">REF-{Math.random().toString(36).substr(2, 6).toUpperCase()}</h3>
+              </div>
+              <div className="text-right">
+                <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Status</p>
+                <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-black">ACTIVE</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Category</p>
+                <p className="text-indigo-950 font-bold text-lg">{category}</p>
+              </div>
+              <div>
+                <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">AI Detection</p>
+                <span className={`inline-block px-4 py-1 rounded-lg text-sm font-black ${
+                  detectedAbuse ? 'bg-rose-100 text-rose-700' : 'bg-indigo-100 text-indigo-700'
+                }`}>
+                  {detectedAbuse ? 'PROFANE' : 'ANALYZED'}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">Subject</p>
+              <p className="text-slate-700 font-bold text-xl leading-snug line-clamp-2">{subject}</p>
+            </div>
+          </div>
+          <div className="bg-slate-50 p-6 text-center border-t border-slate-100">
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+              Notification dispatched to {currentStudent.email}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-12 flex items-center justify-center space-x-3 text-indigo-600 font-black animate-pulse">
+          <Timer className="w-5 h-5" />
+          <span className="uppercase text-xs tracking-widest">Auto-redirecting to dashboard...</span>
         </div>
       </div>
     );
