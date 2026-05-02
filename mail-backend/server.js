@@ -22,10 +22,15 @@ mongoose.connect(MONGO_URI)
   .catch(err => console.error(`[DB] MongoDB connection error:`, err));
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // Use SSL
   auth: {
     user: process.env.GMAIL_USER || "zealcollegeit@gmail.com",
     pass: process.env.GMAIL_PASS || "wtye psji kjtg osbi" 
+  },
+  tls: {
+    rejectUnauthorized: false // Helps avoid SSL handshake issues on some servers
   }
 });
 
