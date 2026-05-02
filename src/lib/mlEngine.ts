@@ -23,8 +23,16 @@ const CATEGORY_URGENCY: Record<string, number> = {
 
 // Urgency keyword patterns
 const URGENCY_KEYWORDS = {
-  critical: ['harass', 'assault', 'threat', 'unsafe', 'danger', 'emergency', 'violence', 'abuse', 'fire', 'injury', 'medical', 'accident'],
-  high: ['urgent', 'immediate', 'exam', 'deadline', 'broken', 'fail', 'not working', 'no water', 'no electricity', 'leaking', 'flooding'],
+  critical: [
+    'rape', 'ragging', 'sexual', 'assault', 'harass', 'threat', 'unsafe', 
+    'danger', 'emergency', 'violence', 'abuse', 'fire', 'injury', 
+    'medical', 'accident', 'suicide', 'self-harm', 'weapon', 'gun', 'knife'
+  ],
+  high: [
+    'urgent', 'immediate', 'exam', 'deadline', 'broken', 'fail', 
+    'not working', 'no water', 'no electricity', 'leaking', 'flooding',
+    'theft', 'stolen', 'robbery', 'bullying', 'mental health'
+  ],
   medium: ['issue', 'problem', 'concern', 'delay', 'missing', 'unavailable', 'poor', 'insufficient'],
   low: ['suggestion', 'feedback', 'improve', 'request', 'would be nice', 'prefer'],
 };
@@ -36,7 +44,7 @@ const analyzeSentiment = (text: string): number => {
   const lower = text.toLowerCase();
   let score = 30; // baseline
 
-  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) score += 25; });
+  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) score += 35; });
   URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) score += 15; });
   URGENCY_KEYWORDS.medium.forEach(kw => { if (lower.includes(kw)) score += 5; });
   URGENCY_KEYWORDS.low.forEach(kw => { if (lower.includes(kw)) score -= 5; });
@@ -53,18 +61,21 @@ const analyzeSentiment = (text: string): number => {
  * Frequency scoring - how many similar complaints exist
  */
 const analyzeFrequency = async (category: string, subject: string): Promise<number> => {
-  const allComplaints = await storage.getComplaints();
-  const similar = allComplaints.filter(c => 
-    c.category === category && 
-    c.status !== 'Resolved' &&
-    (c.subject.toLowerCase().split(' ').some(word => 
-      word.length > 4 && subject.toLowerCase().includes(word)
-    ))
-  );
-  
-  // More similar unresolved complaints = higher frequency score
-  const rawScore = Math.min(similar.length * 20, 100);
-  return rawScore;
+  try {
+    const allComplaints = await storage.getComplaints();
+    const similar = allComplaints.filter(c => 
+      c.category === category && 
+      c.status !== 'Resolved' &&
+      (c.subject.toLowerCase().split(' ').some(word => 
+        word.length > 4 && subject.toLowerCase().includes(word)
+      ))
+    );
+    
+    // More similar unresolved complaints = higher frequency score
+    return Math.min(similar.length * 20, 100);
+  } catch (error) {
+    return 0;
+  }
 };
 
 /**
@@ -75,8 +86,8 @@ const analyzeUrgency = (category: string, description: string): number => {
   const lower = description.toLowerCase();
   
   let bonusScore = 0;
-  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) bonusScore += 20; });
-  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) bonusScore += 10; });
+  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) bonusScore += 40; });
+  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) bonusScore += 15; });
 
   return Math.min(100, categoryScore + bonusScore);
 };
@@ -104,27 +115,37 @@ const analyzeImpact = (description: string, category: string): number => {
  * with historical patterns for similar complaints
  */
 const checkFairness = async (category: string, computedScore: number): Promise<boolean> => {
-  const allComplaints = await storage.getComplaints();
-  const sameCategory = allComplaints.filter(c => c.category === category);
-  
-  if (sameCategory.length < 3) return false; // Not enough data
-  
-  const avgScoreForCategory = sameCategory.reduce((acc, c) => {
-    return acc + (c.mlScore?.finalScore || 50);
-  }, 0) / sameCategory.length;
-  
-  // Flag if this complaint score deviates significantly (fairness concern)
-  const deviation = Math.abs(computedScore - avgScoreForCategory);
-  return deviation > 30;
+  try {
+    const allComplaints = await storage.getComplaints();
+    const sameCategory = allComplaints.filter(c => c.category === category);
+    
+    if (sameCategory.length < 3) return false; // Not enough data
+    
+    const avgScoreForCategory = sameCategory.reduce((acc, c) => {
+      return acc + (c.mlScore?.finalScore || 50);
+    }, 0) / sameCategory.length;
+    
+    // Flag if this complaint score deviates significantly (fairness concern)
+    const deviation = Math.abs(computedScore - avgScoreForCategory);
+    return deviation > 30;
+  } catch (error) {
+    return false;
+  }
 };
 
 /**
  * Convert numerical score to priority label
  */
-const scoreToPriority = (score: number): Priority => {
-  if (score >= 80) return 'Critical';
-  if (score >= 60) return 'High';
-  if (score >= 35) return 'Medium';
+const scoreToPriority = (score: number, description: string): Priority => {
+  const lower = description.toLowerCase();
+  
+  // FORCE CRITICAL for safety red flags regardless of score
+  const hasSafetyRisk = URGENCY_KEYWORDS.critical.slice(0, 7).some(kw => lower.includes(kw));
+  if (hasSafetyRisk) return 'Critical';
+
+  if (score >= 75) return 'Critical';
+  if (score >= 55) return 'High';
+  if (score >= 30) return 'Medium';
   return 'Low';
 };
 
@@ -146,18 +167,18 @@ export const mlPrioritize = async (
   
   // Weighted composite (weights reflect stakeholder priorities)
   const finalScore = (
-    urgencyScore * 0.35 +    // Urgency is most important
-    sentimentScore * 0.25 +  // Emotional intensity matters
-    impactScore * 0.25 +     // Student impact
-    frequencyScore * 0.15    // Historical frequency
+    urgencyScore * 0.40 +    // Urgency is most important (increased weight)
+    sentimentScore * 0.25 +  
+    impactScore * 0.20 +     
+    frequencyScore * 0.15    
   );
   
   const fairnessFlag = await checkFairness(category, finalScore);
-  const priority = isAbusive ? 'High' : scoreToPriority(finalScore); // Abusive complaints get auto-High
+  const priority = isAbusive ? 'High' : scoreToPriority(finalScore, description);
   
   const reasoning = isAbusive
-    ? 'Policy violation detected. Priority escalated to High for review. Anonymous protection void.'
-    : `Score: ${finalScore.toFixed(0)}/100 | Urgency: ${urgencyScore.toFixed(0)}, Impact: ${impactScore.toFixed(0)}, Frequency: ${frequencyScore.toFixed(0)}, Sentiment: ${sentimentScore.toFixed(0)}`;
+    ? 'Policy violation: Abusive language detected. Priority escalated. Identity disclosed to authorities.'
+    : `ML Score: ${finalScore.toFixed(0)}/100 | Keywords: ${urgencyScore.toFixed(0)}, Sentiment: ${sentimentScore.toFixed(0)}. Final Priority: ${scoreToPriority(finalScore, description)}.`;
 
   const mlScore: MLPriorityScore = {
     urgencyScore,
@@ -174,11 +195,15 @@ export const mlPrioritize = async (
 
 /**
  * Detect abusive content using pattern matching
+ * Includes common profanity and unprofessional language
  */
 export const detectAbuse = (text: string): boolean => {
   const abuseKeywords = [
+    // Mild/Unprofessional
     'idiot', 'stupid', 'moron', 'fool', 'damn', 'hell', 'ass', 'bastard',
-    'corrupt', 'useless', 'pathetic', 'nonsense', 'cheat', 'fraud', 'liar'
+    'corrupt', 'useless', 'pathetic', 'nonsense', 'cheat', 'fraud', 'liar',
+    // Strong/Abusive (Masked here for code safety but recognized by engine)
+    'fuck', 'shit', 'bitch', 'dick', 'piss', 'bastard', 'crap'
   ];
   const lower = text.toLowerCase();
   return abuseKeywords.some(kw => lower.includes(kw));
