@@ -1,7 +1,7 @@
 import type { Complaint, Statistics, AdminUser, StudentUser } from '../types';
 import { ADMIN_SESSION_KEY, STUDENT_SESSION_KEY } from '../constants';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const storage = {
   getComplaints: async (): Promise<Complaint[]> => {

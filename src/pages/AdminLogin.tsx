@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, AlertCircle, Eye, EyeOff, Lock } from 'lucide-react';
 import { storage } from '../lib/storage';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
