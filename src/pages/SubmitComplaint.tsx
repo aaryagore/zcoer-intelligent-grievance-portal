@@ -71,7 +71,7 @@ export const SubmitComplaint: React.FC = () => {
       policyViolation: forceDisclosure,
       studentName: finalAnonymous ? undefined : currentStudent.name,
       studentId: finalAnonymous ? undefined : currentStudent.zprn,
-      studentEmail: currentStudent.email,
+      studentEmail: finalAnonymous ? undefined : currentStudent.email,
       createdAt: Date.now(),
       status: 'Pending',
       priority,

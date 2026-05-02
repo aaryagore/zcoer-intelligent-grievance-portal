@@ -287,12 +287,12 @@ export const AdminDashboard: React.FC = () => {
                       {c.isAnonymous && !c.policyViolation ? (
                         <div className="flex items-center text-slate-400 bg-slate-50 px-3 py-1 rounded-full text-xs font-bold">
                           <EyeOff className="w-3.5 h-3.5 mr-2" />
-                          <span>Identity Hidden</span>
+                          <span>Identity Masked</span>
                         </div>
                       ) : (
                         <div className={`flex items-center px-3 py-1 rounded-full text-xs font-bold ${c.policyViolation ? 'bg-rose-600 text-white' : 'bg-indigo-50 text-indigo-600'}`}>
                           <User className="w-3.5 h-3.5 mr-2" />
-                          <span>{c.studentName} ({c.studentId})</span>
+                          <span>{c.studentName || 'Unknown'} ({c.studentId || 'Anonymous'})</span>
                         </div>
                       )}
                       {c.studentEmail && !c.isAnonymous && (
