@@ -2,9 +2,9 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Complaint = require('../mail-backend/models/Complaint');
-const Student = require('../mail-backend/models/Student');
-const Staff = require('../mail-backend/models/Staff');
+const Complaint = require('./models/Complaint');
+const Student = require('./models/Student');
+const Staff = require('./models/Staff');
 
 const app = express();
 app.use(cors());
