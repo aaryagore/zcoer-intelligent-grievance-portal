@@ -133,7 +133,7 @@ app.put("/api/complaints/:id/status", async (req, res) => {
 
 
 // --- Mail Endpoints ---
-app.post("/send-mail", async (req, res) => {
+app.post("/api/send-mail", async (req, res) => {
   const { to, subject, message } = req.body;
 
   if (!to || !subject || !message) {

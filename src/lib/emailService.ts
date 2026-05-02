@@ -64,7 +64,7 @@ Email: zeal.grievance@zealeducation.com
 This is an automated notification. Please do not reply to this email.
       `.trim();
 
-      const response = await fetch(`${BACKEND_URL}/send-mail`, {
+      const response = await fetch(`${BACKEND_URL}/api/send-mail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to: student.email, subject, message })
@@ -152,7 +152,7 @@ Email: zeal.grievance@zealeducation.com
 This is an automated notification. Please do not reply to this email.
       `.trim();
 
-      const response = await fetch(`${BACKEND_URL}/send-mail`, {
+      const response = await fetch(`${BACKEND_URL}/api/send-mail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to: recipientEmail, subject, message })
