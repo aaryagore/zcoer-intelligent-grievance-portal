@@ -1,7 +1,7 @@
 import type { StudentUser, Complaint } from '../types';
 import { STUDENT_DATABASE } from '../constants';
 
-const BACKEND_URL = '/api';
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 /**
  * ZCOER AI-Powered Email Gateway
