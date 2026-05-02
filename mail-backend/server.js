@@ -23,15 +23,17 @@ mongoose.connect(MONGO_URI)
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // Use SSL
+  port: 587,
+  secure: false, // use STARTTLS
   auth: {
     user: process.env.GMAIL_USER || "zealcollegeit@gmail.com",
     pass: process.env.GMAIL_PASS || "wtye psji kjtg osbi" 
   },
   tls: {
-    rejectUnauthorized: false // Helps avoid SSL handshake issues on some servers
-  }
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000 // 10 seconds
 });
 
 // Health check endpoint
