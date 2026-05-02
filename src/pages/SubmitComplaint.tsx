@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   AlertCircle, CheckCircle2, ChevronDown, EyeOff, Send,
-  User, MessageSquare, ShieldAlert, Skull, ShieldX,
+  User, MessageSquare, ShieldAlert, Skull, ShieldX, Timer
 } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 import type { Category, Complaint } from '../types';

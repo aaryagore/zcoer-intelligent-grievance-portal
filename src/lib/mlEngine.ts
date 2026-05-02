@@ -1,6 +1,5 @@
-import { GoogleGenerativeAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { MLPriorityScore, Priority } from '../types';
-import { storage } from './storage';
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
