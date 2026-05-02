@@ -1,4 +1,4 @@
-import type { Complaint, MLPriorityScore, Priority, Category } from '../types';
+import type { MLPriorityScore, Priority } from '../types';
 import { storage } from './storage';
 
 /**

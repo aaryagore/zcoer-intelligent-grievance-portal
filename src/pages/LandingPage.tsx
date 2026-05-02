@@ -1,15 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  ArrowRight, CheckCircle2, ShieldCheck, Zap, GraduationCap, 
-  FileSearch, ShieldAlert, Activity, Lock, Timer, 
+  ArrowRight, CheckCircle2, ShieldCheck, 
+  FileSearch, ShieldAlert, Timer, 
   Brain, BarChart3, Scale, Sparkles
 } from 'lucide-react';
 import { storage } from '../lib/storage';
 
 export const LandingPage: React.FC = () => {
-  const stats = storage.getStats();
+  const [stats, setStats] = React.useState({ total: 0, pending: 0, resolved: 0, inProgress: 0, critical: 0, high: 0 });
   const currentStudent = storage.getCurrentStudent();
+
+  React.useEffect(() => {
+    storage.getStats().then(setStats);
+  }, []);
 
   const featureCards = [
     {

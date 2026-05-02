@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, AlertCircle, Eye, EyeOff, ArrowRight, Lock } from 'lucide-react';
+import { Shield, AlertCircle, Eye, EyeOff, Lock } from 'lucide-react';
 import { STAFF_ACCOUNTS } from '../constants';
 import { storage } from '../lib/storage';
 

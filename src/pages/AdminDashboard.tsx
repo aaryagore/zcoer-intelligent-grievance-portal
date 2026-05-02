@@ -1,13 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  LogOut, Search, CheckCircle2, Clock, AlertTriangle, User, EyeOff, 
-  Briefcase, ShieldAlert, ShieldX, Skull, Brain, BarChart3, Scale, Mail,
-  TrendingUp, Zap, Filter
+  LogOut, Search, User, EyeOff, 
+  Briefcase, Skull, Brain, Scale, Mail
 } from 'lucide-react';
 import { storage } from '../lib/storage';
 import type { Complaint, AdminUser } from '../types';
-import { STATUS_COLORS, PRIORITY_COLORS } from '../constants';
+import { STATUS_COLORS } from '../constants';
 import { emailService } from '../lib/emailService';
 
 export const AdminDashboard: React.FC = () => {
