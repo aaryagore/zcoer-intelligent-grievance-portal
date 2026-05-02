@@ -22,8 +22,8 @@ mongoose.connect(MONGO_URI)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.GMAIL_USER || "gaurilavand8@gmail.com",
-    pass: process.env.GMAIL_PASS || "qkjr omhm icxt twwc" 
+    user: process.env.GMAIL_USER || "zealcollegeit@gmail.com",
+    pass: process.env.GMAIL_PASS || "YOUR_APP_PASSWORD" 
   }
 });
 
@@ -95,7 +95,7 @@ app.post("/send-mail", async (req, res) => {
 
   try {
     const info = await transporter.sendMail({
-      from: `"ZCOER Grievance Cell" <${process.env.GMAIL_USER || "gaurilavand8@gmail.com"}>`,
+      from: `"ZCOER Grievance Cell" <${process.env.GMAIL_USER || "zealcollegeit@gmail.com"}>`,
       to: to,
       subject: subject,
       text: message,
