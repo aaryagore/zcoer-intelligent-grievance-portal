@@ -42,17 +42,12 @@ const URGENCY_KEYWORDS = {
  */
 const analyzeSentiment = (text: string): number => {
   const lower = text.toLowerCase();
-  let score = 30; // baseline
+  let score = 40; // Higher baseline for better sensitivity
 
-  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) score += 35; });
-  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) score += 15; });
+  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) score += 40; });
+  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) score += 20; });
   URGENCY_KEYWORDS.medium.forEach(kw => { if (lower.includes(kw)) score += 5; });
-  URGENCY_KEYWORDS.low.forEach(kw => { if (lower.includes(kw)) score -= 5; });
-
-  // Text length and complexity
-  if (text.length > 300) score += 10;
-  if (text.includes('!')) score += 5;
-  if (text.toUpperCase() === text && text.length > 20) score += 10;
+  URGENCY_KEYWORDS.low.forEach(kw => { if (lower.includes(kw)) score -= 10; });
 
   return Math.min(100, Math.max(0, score));
 };
@@ -60,19 +55,16 @@ const analyzeSentiment = (text: string): number => {
 /**
  * Frequency scoring - how many similar complaints exist
  */
-const analyzeFrequency = async (category: string, subject: string): Promise<number> => {
+const analyzeFrequency = async (category: string, fullText: string): Promise<number> => {
   try {
     const allComplaints = await storage.getComplaints();
     const similar = allComplaints.filter(c => 
       c.category === category && 
       c.status !== 'Resolved' &&
-      (c.subject.toLowerCase().split(' ').some(word => 
-        word.length > 4 && subject.toLowerCase().includes(word)
-      ))
+      (fullText.toLowerCase().includes(c.subject.toLowerCase()))
     );
     
-    // More similar unresolved complaints = higher frequency score
-    return Math.min(similar.length * 20, 100);
+    return Math.min(similar.length * 25, 100);
   } catch (error) {
     return 0;
   }
@@ -81,13 +73,16 @@ const analyzeFrequency = async (category: string, subject: string): Promise<numb
 /**
  * Urgency scoring based on category and keywords
  */
-const analyzeUrgency = (category: string, description: string): number => {
-  const categoryScore = CATEGORY_URGENCY[category] || 50;
-  const lower = description.toLowerCase();
+const analyzeUrgency = (category: string, fullText: string): number => {
+  const lower = fullText.toLowerCase();
   
+  // ABSOLUTE OVERRIDE: If any critical keyword is found, urgency is 100%
+  const hasCritical = URGENCY_KEYWORDS.critical.some(kw => lower.includes(kw));
+  if (hasCritical) return 100;
+
+  const categoryScore = CATEGORY_URGENCY[category] || 50;
   let bonusScore = 0;
-  URGENCY_KEYWORDS.critical.forEach(kw => { if (lower.includes(kw)) bonusScore += 40; });
-  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) bonusScore += 15; });
+  URGENCY_KEYWORDS.high.forEach(kw => { if (lower.includes(kw)) bonusScore += 20; });
 
   return Math.min(100, categoryScore + bonusScore);
 };
@@ -95,63 +90,36 @@ const analyzeUrgency = (category: string, description: string): number => {
 /**
  * Impact scoring - estimated number of students affected
  */
-const analyzeImpact = (description: string, category: string): number => {
-  const lower = description.toLowerCase();
+const analyzeImpact = (fullText: string, category: string): number => {
+  const lower = fullText.toLowerCase();
   let score = 30;
   
-  // Collective reports
-  if (lower.includes('all student') || lower.includes('everyone')) score += 40;
-  if (lower.includes('many student') || lower.includes('multiple')) score += 25;
-  if (lower.includes('our class') || lower.includes('whole batch')) score += 20;
+  if (lower.includes('all') || lower.includes('everyone') || lower.includes('group')) score += 40;
+  if (lower.includes('class') || lower.includes('batch') || lower.includes('hostel')) score += 25;
   
-  // High-impact categories
-  if (['Security', 'Hostel', 'Electricity', 'Transport'].includes(category)) score += 15;
+  if (['Security', 'Hostel', 'Electricity', 'Transport'].includes(category)) score += 20;
   
   return Math.min(100, score);
 };
 
 /**
- * Fairness analysis - checks if priority assignment is consistent
- * with historical patterns for similar complaints
- */
-const checkFairness = async (category: string, computedScore: number): Promise<boolean> => {
-  try {
-    const allComplaints = await storage.getComplaints();
-    const sameCategory = allComplaints.filter(c => c.category === category);
-    
-    if (sameCategory.length < 3) return false; // Not enough data
-    
-    const avgScoreForCategory = sameCategory.reduce((acc, c) => {
-      return acc + (c.mlScore?.finalScore || 50);
-    }, 0) / sameCategory.length;
-    
-    // Flag if this complaint score deviates significantly (fairness concern)
-    const deviation = Math.abs(computedScore - avgScoreForCategory);
-    return deviation > 30;
-  } catch (error) {
-    return false;
-  }
-};
-
-/**
  * Convert numerical score to priority label
  */
-const scoreToPriority = (score: number, description: string): Priority => {
-  const lower = description.toLowerCase();
+const scoreToPriority = (score: number, fullText: string): Priority => {
+  const lower = fullText.toLowerCase();
   
-  // FORCE CRITICAL for safety red flags regardless of score
-  const hasSafetyRisk = URGENCY_KEYWORDS.critical.slice(0, 7).some(kw => lower.includes(kw));
+  // SAFETY OVERRIDE: Absolute Critical for safety red flags
+  const hasSafetyRisk = URGENCY_KEYWORDS.critical.some(kw => lower.includes(kw));
   if (hasSafetyRisk) return 'Critical';
 
-  if (score >= 75) return 'Critical';
-  if (score >= 55) return 'High';
-  if (score >= 30) return 'Medium';
+  if (score >= 70) return 'Critical';
+  if (score >= 50) return 'High';
+  if (score >= 25) return 'Medium';
   return 'Low';
 };
 
 /**
  * Main ML Prioritization Function
- * Returns both priority label and detailed ML score breakdown
  */
 export const mlPrioritize = async (
   category: string,
@@ -160,25 +128,27 @@ export const mlPrioritize = async (
   isAbusive: boolean
 ): Promise<{ priority: Priority; mlScore: MLPriorityScore }> => {
   
-  const urgencyScore = analyzeUrgency(category, description);
-  const frequencyScore = await analyzeFrequency(category, subject);
-  const impactScore = analyzeImpact(description, category);
-  const sentimentScore = analyzeSentiment(description);
+  const fullText = `${subject} ${description}`.toLowerCase();
   
-  // Weighted composite (weights reflect stakeholder priorities)
+  const urgencyScore = analyzeUrgency(category, fullText);
+  const frequencyScore = await analyzeFrequency(category, fullText);
+  const impactScore = analyzeImpact(fullText, category);
+  const sentimentScore = analyzeSentiment(fullText);
+  
+  // Final composite score
   const finalScore = (
-    urgencyScore * 0.40 +    // Urgency is most important (increased weight)
-    sentimentScore * 0.25 +  
+    urgencyScore * 0.50 +    // Increased urgency weight for safety
+    sentimentScore * 0.20 +  
     impactScore * 0.20 +     
-    frequencyScore * 0.15    
+    frequencyScore * 0.10    
   );
   
   const fairnessFlag = await checkFairness(category, finalScore);
-  const priority = isAbusive ? 'High' : scoreToPriority(finalScore, description);
+  const priority = isAbusive ? 'High' : scoreToPriority(finalScore, fullText);
   
   const reasoning = isAbusive
-    ? 'Policy violation: Abusive language detected. Priority escalated. Identity disclosed to authorities.'
-    : `ML Score: ${finalScore.toFixed(0)}/100 | Keywords: ${urgencyScore.toFixed(0)}, Sentiment: ${sentimentScore.toFixed(0)}. Final Priority: ${scoreToPriority(finalScore, description)}.`;
+    ? 'Policy violation: Abusive language detected. Priority escalated. Identity disclosed.'
+    : `ML Engine: Detected ${urgencyScore === 100 ? 'CRITICAL SAFETY RISK' : 'Standard complaint'}. Final priority: ${priority}.`;
 
   const mlScore: MLPriorityScore = {
     urgencyScore,
