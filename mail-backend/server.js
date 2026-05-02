@@ -30,6 +30,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // Health check endpoint
+app.get("/", (req, res) => {
+  res.send("<h1>ZCOER Intelligent Grievance Portal - Backend is Live!</h1><p>Use /health for status check.</p>");
+});
+
 app.get("/health", (req, res) => {
   res.json({ status: "ZCOER Backend Running", port: 5001, dbStatus: mongoose.connection.readyState });
 });
