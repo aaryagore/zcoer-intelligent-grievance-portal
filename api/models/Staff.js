@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const staffSchema = new mongoose.Schema({
   staffId: { type: String, required: true, unique: true },
@@ -9,4 +9,4 @@ const staffSchema = new mongoose.Schema({
   assignedCategory: { type: String, required: true }
 });
 
-module.exports = mongoose.models.Staff || mongoose.model("Staff", staffSchema);
+export default mongoose.models.Staff || mongoose.model("Staff", staffSchema);

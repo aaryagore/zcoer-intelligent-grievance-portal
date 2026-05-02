@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const studentSchema = new mongoose.Schema({
   zprn: { type: String, required: true, unique: true },
@@ -7,4 +7,4 @@ const studentSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
-module.exports = mongoose.models.Student || mongoose.model("Student", studentSchema);
+export default mongoose.models.Student || mongoose.model("Student", studentSchema);

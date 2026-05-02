@@ -1,10 +1,10 @@
-const express = require('express');
-const nodemailer = require('nodemailer');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const Complaint = require('./models/Complaint');
-const Student = require('./models/Student');
-const Staff = require('./models/Staff');
+import express from 'express';
+import nodemailer from 'nodemailer';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import Complaint from './models/Complaint.js';
+import Student from './models/Student.js';
+import Staff from './models/Staff.js';
 
 const app = express();
 app.use(cors());
@@ -111,4 +111,4 @@ app.post("/api/send-mail", async (req, res) => {
   }
 });
 
-module.exports = app;
+export default app;
