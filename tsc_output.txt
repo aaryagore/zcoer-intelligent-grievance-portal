@@ -1,0 +1,37 @@
+﻿src/constants.ts(1,10): error TS1484: 'Category' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/constants.ts(1,20): error TS1484: 'AdminUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/constants.ts(1,31): error TS1484: 'StudentUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/emailService.ts(1,10): error TS1484: 'StudentUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/emailService.ts(1,23): error TS1484: 'Complaint' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/emailService.ts(36,42): error TS2551: Property 'reasonin' does not exist on type 'MLPriorityScore'. Did you mean 'reasoning'?
+src/lib/mlEngine.ts(1,10): error TS1484: 'Complaint' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/mlEngine.ts(1,10): error TS6133: 'Complaint' is declared but its value is never read.
+src/lib/mlEngine.ts(1,21): error TS1484: 'MLPriorityScore' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/mlEngine.ts(1,38): error TS1484: 'Priority' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/storage.ts(1,10): error TS1484: 'Complaint' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/storage.ts(1,21): error TS1484: 'Statistics' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/storage.ts(1,33): error TS1484: 'AdminUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/lib/storage.ts(1,44): error TS1484: 'StudentUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/AdminDashboard.tsx(4,19): error TS6133: 'CheckCircle2' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(4,33): error TS6133: 'Clock' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(4,40): error TS6133: 'AlertTriangle' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(5,14): error TS6133: 'ShieldAlert' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(5,27): error TS6133: 'ShieldX' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(5,50): error TS6133: 'BarChart3' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(6,3): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(6,15): error TS6133: 'Zap' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(6,20): error TS6133: 'Filter' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(9,10): error TS1484: 'Complaint' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/AdminDashboard.tsx(9,21): error TS1484: 'AdminUser' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/AdminDashboard.tsx(10,25): error TS6133: 'PRIORITY_COLORS' is declared but its value is never read.
+src/pages/AdminLogin.tsx(3,44): error TS6133: 'ArrowRight' is declared but its value is never read.
+src/pages/LandingPage.tsx(4,42): error TS6133: 'Zap' is declared but its value is never read.
+src/pages/LandingPage.tsx(4,47): error TS6133: 'GraduationCap' is declared but its value is never read.
+src/pages/LandingPage.tsx(5,28): error TS6133: 'Activity' is declared but its value is never read.
+src/pages/LandingPage.tsx(5,38): error TS6133: 'Lock' is declared but its value is never read.
+src/pages/SubmitComplaint.tsx(5,37): error TS6133: 'Lock' is declared but its value is never read.
+src/pages/SubmitComplaint.tsx(6,10): error TS6133: 'BarChart3' is declared but its value is never read.
+src/pages/SubmitComplaint.tsx(6,21): error TS6133: 'Zap' is declared but its value is never read.
+src/pages/SubmitComplaint.tsx(6,26): error TS6133: 'Scale' is declared but its value is never read.
+src/pages/SubmitComplaint.tsx(9,10): error TS1484: 'Category' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/SubmitComplaint.tsx(9,20): error TS1484: 'Complaint' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.

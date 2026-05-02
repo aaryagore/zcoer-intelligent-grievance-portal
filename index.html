@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Grievance Portal | ZCOER - Smart Complaint Prioritization</title>
+    <meta name="description" content="ZCOER's AI-powered intelligent grievance redressal portal with adaptive ML-based complaint prioritization, email notifications and fairness analysis.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              indigo: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#064F93',
+                700: '#05447f',
+                800: '#063561',
+                900: '#0b2d51',
+                950: '#071d38'
+              },
+              zeal: {
+                gold: '#FFD700',
+                goldLight: '#FFFBE6',
+                dark: '#0f172a',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-soft': 'pulse-soft 4s ease-in-out infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+              'slide-up': 'slide-up 0.3s ease-out',
+              'fade-in': 'fade-in 0.4s ease-out',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-15px)' },
+              },
+              'pulse-soft': {
+                '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                '50%': { opacity: '0.6', transform: 'scale(1.1)' },
+              },
+              shimmer: {
+                '0%': { backgroundPosition: '-200% 0' },
+                '100%': { backgroundPosition: '200% 0' },
+              },
+              'slide-up': {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; }
+        .zeal-light-gradient {
+          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .grid-pattern-dark {
+          background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+          background-size: 30px 30px;
+        }
+        .blueprint-pattern-light {
+          background-image: linear-gradient(rgba(6, 79, 147, 0.03) 1px, transparent 1px), 
+                            linear-gradient(90deg, rgba(6, 79, 147, 0.03) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+        .glass-monitor {
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(15, 23, 42, 0.1);
+        }
+        .text-glow-gold {
+          text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .priority-high-glow {
+          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+        .priority-medium-glow {
+          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+        .ml-score-bar {
+          transition: width 1s ease-in-out;
+        }
+        ::selection {
+          background: #FFD700;
+          color: #071d38;
+        }
+        .animate-shimmer-bg {
+          background-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-900 overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
