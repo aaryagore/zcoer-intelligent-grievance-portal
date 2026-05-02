@@ -34,6 +34,17 @@ app.get('/api/health', (req, res) => {
   res.json({ status: "Vercel API Running", dbStatus: mongoose.connection.readyState });
 });
 
+// Debug endpoint
+app.get('/api/debug', (req, res) => {
+  res.json({ 
+    hasMongoUri: !!process.env.MONGO_URI,
+    mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 15) + "..." : "MISSING",
+    hasGmailUser: !!process.env.GMAIL_USER,
+    hasGmailPass: !!process.env.GMAIL_PASS,
+    nodeVersion: process.version
+  });
+});
+
 // --- Auth Endpoints ---
 app.post("/api/auth/student-login", async (req, res) => {
   try {
