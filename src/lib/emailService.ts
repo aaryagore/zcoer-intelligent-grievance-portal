@@ -67,7 +67,16 @@ This is an automated notification. Please do not reply to this email.
       const response = await fetch(`${BACKEND_URL}/api/send-mail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: student.email, subject, message })
+        body: JSON.stringify({ 
+          to: student.email, 
+          subject, 
+          message,
+          details: {
+            id: complaint.id,
+            category: complaint.category,
+            priority: complaint.priority
+          }
+        })
       });
 
       if (!response.ok) throw new Error('Mail server error');
@@ -155,7 +164,16 @@ This is an automated notification. Please do not reply to this email.
       const response = await fetch(`${BACKEND_URL}/api/send-mail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: recipientEmail, subject, message })
+        body: JSON.stringify({ 
+          to: recipientEmail, 
+          subject, 
+          message,
+          details: {
+            id: complaint.id,
+            category: complaint.category,
+            priority: complaint.priority
+          }
+        })
       });
 
       if (!response.ok) throw new Error('Mail server error');

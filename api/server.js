@@ -124,14 +124,58 @@ app.put("/api/complaints/:id/status", async (req, res) => {
 
 // --- Mail Endpoint ---
 app.post("/api/send-mail", async (req, res) => {
-  const { to, subject, message } = req.body;
+  const { to, subject, message, details } = req.body;
   try {
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
+        <div style="background-color: #1e1b4b; padding: 30px; text-align: center;">
+          <h1 style="color: #fbbf24; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">ZCOER Grievance Cell</h1>
+          <p style="color: #ffffff; margin: 10px 0 0 0; opacity: 0.8; font-size: 14px;">Intelligent Redressal System</p>
+        </div>
+        
+        <div style="padding: 40px; color: #1e293b; line-height: 1.6;">
+          <h2 style="color: #1e1b4b; margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Notification: ${subject}</h2>
+          
+          <div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; margin: 25px 0; border-left: 4px solid #fbbf24;">
+            <p style="margin: 0; font-weight: bold; color: #475569; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Message Body</p>
+            <p style="margin: 10px 0 0 0; font-size: 16px; color: #334155;">${message}</p>
+          </div>
+
+          ${details ? `
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tr style="background-color: #f1f5f9;">
+              <th style="padding: 12px; text-align: left; font-size: 13px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Reference ID</th>
+              <td style="padding: 12px; font-family: monospace; font-weight: bold; color: #1e1b4b; border-bottom: 1px solid #e2e8f0;">${details.id}</td>
+            </tr>
+            <tr>
+              <th style="padding: 12px; text-align: left; font-size: 13px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Category</th>
+              <td style="padding: 12px; color: #1e293b; border-bottom: 1px solid #e2e8f0;">${details.category}</td>
+            </tr>
+            <tr style="background-color: #f1f5f9;">
+              <th style="padding: 12px; text-align: left; font-size: 13px; color: #64748b; border-bottom: 1px solid #e2e8f0;">AI Priority</th>
+              <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">
+                <span style="background-color: ${details.priority === 'Critical' ? '#fee2e2' : '#fef3c7'}; color: ${details.priority === 'Critical' ? '#991b1b' : '#92400e'}; padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: bold; text-transform: uppercase;">
+                  ${details.priority}
+                </span>
+              </td>
+            </tr>
+          </table>
+          ` : ''}
+
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f1f5f9; text-align: center;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">This is an automated message from the AI-Powered Redressal Portal.</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 5px 0;">© 2026 Zeal College of Engineering & Research</p>
+          </div>
+        </div>
+      </div>
+    `;
+
     await transporter.sendMail({
       from: `"ZCOER Grievance Cell" <${process.env.GMAIL_USER}>`,
       to,
-      subject,
+      subject: `[ZCOER] ${subject}`,
       text: message,
-      html: `<div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee;">${message}</div>`
+      html: htmlContent
     });
     res.json({ success: true });
   } catch (error) {
